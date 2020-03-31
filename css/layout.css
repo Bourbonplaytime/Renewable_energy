@@ -1,0 +1,15 @@
+.wrapper {
+  background-color: blue;
+}
+
+.intro-div {
+  text-align: center;
+  background-color: black;
+  color: red;
+}
+
+.form {
+  align-content: center;
+  font-size: 18px;
+  font-weight: 700;
+}
