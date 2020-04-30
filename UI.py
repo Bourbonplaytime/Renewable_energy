@@ -15,6 +15,10 @@ def index():
     data = get_saved_data()
     return render_template("index.html", saves=get_saved_data())
 
+@app.route('/visuals')
+def visuals():
+    return render_template("visuals.html")
+
 @app.route('/show', methods=['POST'])
 def show():
     response = make_response(redirect(url_for('index')))
