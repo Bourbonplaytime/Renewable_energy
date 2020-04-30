@@ -8,7 +8,6 @@ import plotly.graph_objects as go
 import sqlite3
 
 US_data = pd.read_csv('US_energy.csv')
-
 db = sqlite3.connect("Dash_Energy.db")
 en_sql = US_data.to_sql("Dash_Energy", db, if_exists="replace")
 tot_query = 'SELECT * FROM Dash_Energy WHERE commodity_transaction="Electricity - net production";'
@@ -31,7 +30,7 @@ app.layout = html.Div([html.H2('US National Renewable Energy by Source 1990-2014
     html.Div([dcc.Dropdown(id='category-select', options=[{'label': i.capitalize(), 'value': i} for i in ren_cats],
                            value='hydro', style={'width': '150px'})]),
     dcc.Graph('energy_visual'),
-    html.Div([html.H2('US National Renewable Energy by Year Side by Side in Kilowatt-Hours:Millions 1990-2014'),
+    html.Div([html.H2('US National Renewable Energy Side by Side by Year in Kilowatt-Hours:Millions 1990-2014'),
     dcc.Graph(figure = go.Figure(data=[
     go.Bar(name='Wind', x=wind_results['year'], y=wind_results['quantity']),
     go.Bar(name='Solar', x=sol_results['year'], y=sol_results['quantity']),
