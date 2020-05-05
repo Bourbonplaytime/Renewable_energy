@@ -3,7 +3,6 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
-import plotly
 import plotly.express as px
 import plotly.graph_objects as go
 import sqlite3
@@ -54,7 +53,7 @@ layout = go.Layout(
         tickmode='linear',
         tickangle = 285
     ),
-    width=1000,
+    width=1500,
     height=400
 )
 
@@ -63,8 +62,12 @@ server = app.server
 
 ren_cats = ['hydro', 'geothermal', 'solar_electricity', 'wind_electricity']
 st_cats = ['Hydroelectric Conventional', 'Solar Thermal and Photovoltaic', 'Wind', 'Geothermal']
-app.layout = html.Div([html.H2('US National Renewable Energy by Source 1990-2014'),
-    html.Div([dcc.Dropdown(id='category-select', options=[{'label': i.capitalize(), 'value': i} for i in ren_cats],
+app.layout = html.Div(
+    className='wrapper',
+    children = [
+    html.Div([
+    html.H2('US National Renewable Energy by Source 1990-2014'),
+    dcc.Dropdown(id='category-select', options=[{'label': i.capitalize(), 'value': i} for i in ren_cats],
                            value='hydro', style={'width': '150px'})]),
     dcc.Graph('energy_visual'),
     html.Div([
