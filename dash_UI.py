@@ -17,6 +17,8 @@ en_sql = US_data.to_sql("Dash_Energy", db, if_exists="replace")
 tot_query = 'SELECT * FROM Dash_Energy WHERE commodity_transaction="Electricity - net production";'
 tot_results = pd.read_sql_query(tot_query, db)
 
+#Creates a custom Dataframe object by using a SQL statement to filter for a particular energy source. As calculates the percentage of that source
+#compared to the national whole
 def pd_object(name, category):
     query = "SELECT * FROM Dash_Energy WHERE category='" + category + "';"
     results = pd.read_sql_query(query, db)
@@ -27,19 +29,24 @@ sol_results = pd_object('sol', 'solar_electricity')
 hyd_results = pd_object('hyd', 'hydro')
 geo_results = pd_object('geo', 'geothermal')
 
+#Read in 2nd data source(Stats by state)
 by_state = pd.read_excel (r'annual_generation_state.xls', header=None)
+#Rename the columns for ease of operating on and otherwise process the data
 by_state = by_state.rename(columns={0:"Year", 1:"State", 2:"Type_of_producer", 3:"Energy_Source", 4:"Generation(Megawatt_Hours)"})
 by_state = by_state.drop([0,1], axis=0)
 
+#Create a custom Dataframe object for creating the heatmap
 heat = ((by_state['Energy_Source'] == 'Hydroelectric Conventional') | (by_state['Energy_Source'] == 'Solar Thermal and Photovoltaic')
         | (by_state['Energy_Source'] == 'Wind') | (by_state['Energy_Source'] == 'Geothermal')) & (by_state['Type_of_producer'] ==
         "Total Electric Power Industry") & (by_state['Year'] == 2018)
 heat = by_state[heat]
+#drop unneeded data
 drop = []
 drop.append(heat.index[heat['State'] == 'US-Total'])
 for thing in drop:
     heat = heat.drop(index=thing)
 data = [
+#Heatmap data
 go.Heatmap(
     z=heat['Generation(Megawatt_Hours)'],
     x=heat['State'],
@@ -47,6 +54,7 @@ go.Heatmap(
     colorscale='Viridis',
     )
 ]
+#Heatmap layout
 layout = go.Layout(
     title='Renewable Energy by Source and State in Megawatt-Hours for 2018',
     xaxis=dict(
@@ -57,11 +65,15 @@ layout = go.Layout(
     height=400
 )
 
+#Initialize the dash app
 app = dash.Dash(__name__)
 server = app.server
 
+#Categories for renewable dropdown
 ren_cats = ['hydro', 'geothermal', 'solar_electricity', 'wind_electricity']
+#Categories for by state dropdown
 st_cats = ['Hydroelectric Conventional', 'Solar Thermal and Photovoltaic', 'Wind', 'Geothermal']
+#HTML
 app.layout = html.Div(
     className='wrapper',
     children = [
@@ -92,6 +104,7 @@ app.layout = html.Div(
     ]),
 ])
 
+#Callback for US Renewables by source
 @app.callback(
     Output('energy_visual', 'figure'),
     [Input('category-select', 'value')]
@@ -115,6 +128,7 @@ def update_graph(grpname):
     graph = nat_bar_plotly(op, grpname + '_as_per', grpname)
     return graph
 
+#Callback for by state generation choropleths
 @app.callback(
     Output('by_state', 'figure'),
     [Input('source-select', 'value')]
@@ -146,6 +160,6 @@ def make_choropleth(source):
     st_graph = plotly_choropleth(df, source)
     return st_graph
 
-
+#Run app 
 if __name__ == '__main__':
     app.run_server(debug=True)
