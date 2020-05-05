@@ -3,15 +3,21 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
+import plotly
 import plotly.express as px
 import plotly.graph_objects as go
 import sqlite3
 
+#Read in 1st data set (National Stats)
 US_data = pd.read_csv('US_energy.csv')
+#Create database
 db = sqlite3.connect("Dash_Energy.db")
+#Read data into database
 en_sql = US_data.to_sql("Dash_Energy", db, if_exists="replace")
+#Call database to create a total US energy production to compare sources to
 tot_query = 'SELECT * FROM Dash_Energy WHERE commodity_transaction="Electricity - net production";'
 tot_results = pd.read_sql_query(tot_query, db)
+
 def pd_object(name, category):
     query = "SELECT * FROM Dash_Energy WHERE category='" + category + "';"
     results = pd.read_sql_query(query, db)
@@ -25,6 +31,32 @@ geo_results = pd_object('geo', 'geothermal')
 by_state = pd.read_excel (r'annual_generation_state.xls', header=None)
 by_state = by_state.rename(columns={0:"Year", 1:"State", 2:"Type_of_producer", 3:"Energy_Source", 4:"Generation(Megawatt_Hours)"})
 by_state = by_state.drop([0,1], axis=0)
+
+heat = ((by_state['Energy_Source'] == 'Hydroelectric Conventional') | (by_state['Energy_Source'] == 'Solar Thermal and Photovoltaic')
+        | (by_state['Energy_Source'] == 'Wind') | (by_state['Energy_Source'] == 'Geothermal')) & (by_state['Type_of_producer'] ==
+        "Total Electric Power Industry") & (by_state['Year'] == 2018)
+heat = by_state[heat]
+drop = []
+drop.append(heat.index[heat['State'] == 'US-Total'])
+for thing in drop:
+    heat = heat.drop(index=thing)
+data = [
+go.Heatmap(
+    z=heat['Generation(Megawatt_Hours)'],
+    x=heat['State'],
+    y=heat['Energy_Source'],
+    colorscale='Viridis',
+    )
+]
+layout = go.Layout(
+    title='Renewable Energy by Source and State in Megawatt-Hours for 2018',
+    xaxis=dict(
+        tickmode='linear',
+        tickangle = 285
+    ),
+    width=1000,
+    height=400
+)
 
 app = dash.Dash(__name__)
 server = app.server
@@ -43,6 +75,11 @@ app.layout = html.Div([html.H2('US National Renewable Energy by Source 1990-2014
     go.Bar(name='Hydro', x=hyd_results['year'], y=hyd_results['quantity']),
     go.Bar(name='Geothermal', x=geo_results['year'], y=geo_results['quantity'])
         ]))
+    ]),
+    html.Div([
+    html.H2('US Renewable Energy by State Heat Map'),
+    dcc.Graph(
+    figure = go.Figure(data=data, layout=layout))
     ]),
     html.Div([
     html.H2('US Renewable Energy by State 2018'),
