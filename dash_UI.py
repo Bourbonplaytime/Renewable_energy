@@ -56,7 +56,6 @@ go.Heatmap(
 ]
 #Heatmap layout
 layout = go.Layout(
-    title='Renewable Energy by Source and State in Megawatt-Hours for 2018',
     xaxis=dict(
         tickmode='linear',
         tickangle = 285
@@ -79,9 +78,27 @@ app.layout = html.Div(
     children = [
     html.Div([
     html.H2('US National Renewable Energy by Source 1990-2014'),
+    html.H3('Visualizations for the different major sources of US renewables can be selected via the dropdown'),
     dcc.Dropdown(id='category-select', options=[{'label': i.capitalize(), 'value': i} for i in ren_cats],
-                           value='hydro', style={'width': '150px'})]),
+                           value='hydro', style={'width': '150px'}),
     dcc.Graph('energy_visual'),
+    html.H5('''Hydro Energy is the major player in US renewables contributing more than all other sources combined. Hydro energy is produced by
+    flowing water causing a turbine to spin. The total Hydro generation varies greatly by year in response to water availability. This is largely a
+    function of rainfall but can include other factors such as melting ice. Though Hydro energy as a percentage of the overall American yield peaked in
+    1996 the yields in total have not fallen outside of normal yearly fluctuation and in 2011 almost topped the total generation of 1996 though more
+    total US generation caused it to be a significantly smaller percentage of the whole.'''),
+    html.H5('''Geothermal power is produced by drilling a well into a geothermal pool of water. The trapped steam generated within the wells spins a
+    turbine producing energy. Though geothermal energy has been a player in the US infrastructure for some time it's growth is slow due to high risks
+    in production and exploration, high costs in developing new technology, and long build times for production facilities.'''),
+    html.H5('''Solar energy is produced though a panel which collects natural energies emitted from the sun. Solar is a fast growing part of the
+    American energy infrastructure up about 600% from 2010. It is still a fairly small part of the total peaking at about 0.6% in 2014 but continues
+    to be a larger and larger part every year. Solar has a unique place in that it can be affordable to residential households and has been employed
+    for individuals to not only power their homes but pump power into the energy grid.'''),
+    html.H5('''Wind power is typically collected via a mill which spins in the wind turning a turbine. Wind like Solar has experienced steady growth
+    in recent years and can be credited for up to 4+% of the American total. If this growth can continue over time Wind has the potential to overtake
+    the less reliable hydro sources which now contribute more than twice as much energy in total to America. Wind and solar appear to be the upcoming
+    players in a 21st century American energy economy which will have to take growing advantage of renewable opportunities.''')
+    ]),
     html.Div([
     html.H2('US National Renewable Energy Side by Side by Year in Kilowatt-Hours:Millions 1990-2014'),
     dcc.Graph(figure = go.Figure(data=[
@@ -127,7 +144,6 @@ def update_graph(grpname):
         return plot
     graph = nat_bar_plotly(op, grpname + '_as_per', grpname)
     return graph
-
 #Callback for by state generation choropleths
 @app.callback(
     Output('by_state', 'figure'),
@@ -160,6 +176,6 @@ def make_choropleth(source):
     st_graph = plotly_choropleth(df, source)
     return st_graph
 
-#Run app 
+#Run app
 if __name__ == '__main__':
     app.run_server(debug=True)
