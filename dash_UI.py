@@ -111,7 +111,24 @@ app.layout = html.Div(
     html.Div([
     html.H2('US Renewable Energy by State Heat Map'),
     dcc.Graph(
-    figure = go.Figure(data=data, layout=layout))
+    figure = go.Figure(data=data, layout=layout)),
+    html.H5('''Looking at the by state statistics a few things stand out to me. Most of the states employ 2-3 of the 4 tracked sources with Mississippi
+    being an outlier in only tapping one, and California, Hawaii, Idaho, New Mexico, Nevada, Oregon and Utah using all 4 tracked sources of generation.'''),
+    html.H5('''Hydro is by far most popular on the west coast with Washington leading the way then Oregon and California. New York is the only state on
+    the East Coast with anything comparable to those states on the far west. I was kind of surprised to see there isn't more of a focus on tapping Hydro
+    which generates more power than all other sources combined. I expected to see bigger hotbeds in New England and around the Great Lakes.'''),
+    html.H5('''The leader in solar is California by a wide margin with other major players in Nevada, Arizona and North Carolina. It's unsurprising
+    to see a dedication to this source in desert areas where the availability of sunlight doesn't vary as much. Solar however could be tapped to some
+    extent everywhere so I was surprised to see North Dakota, West Virginia, New Hampshire and Alaska not producing any. Three of the four of those states
+    are on the extreme North part of the country where less sunlight can be expected so I would think this explains part of this phenomena.'''),
+    html.H5('''Wind seems to  be overwhelmingly popular in the great plains with Texas, Oklahoma, Kansas, and Iowa being some of the major players.
+    There is a noted absence of wind utilization in the South with no state East of Louisiana and south of Tennessee-North Carolina producing any
+    at all. Kentucky and Virginia also produce no wind power according to the data. It seems wind does not do as well in New England as it does in other
+    parts of the country.'''),
+    html.H5('''Geothermal is only tapped by 7 total states none being east of New Mexico. Once again California takes the top spot in geothermal with
+    Nevada getting the second largest contribution. Geothermal produces the least of the four sources by a considerable margin and with solar trending up
+    very quickly that margin will likely continue to grow. Geothermal also seems to be the least cost efficient so those two points probably factor
+    heavily in its being the least popular. It is also worth noting some very specific geographic requirements must be met to get the most out of it.''')
     ]),
     html.Div([
     html.H2('US Renewable Energy by State 2018'),
