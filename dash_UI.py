@@ -109,7 +109,7 @@ app.layout = html.Div(
         ]))
     ]),
     html.Div([
-    html.H2('US Renewable Energy by State Heat Map'),
+    html.H2('US Renewable Energy by State in Megawatt Hours Heat Map'),
     dcc.Graph(
     figure = go.Figure(data=data, layout=layout)),
     html.H5('''Looking at the by state statistics a few things stand out to me. Most of the states employ 2-3 of the 4 tracked sources with Mississippi
